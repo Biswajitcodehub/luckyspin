@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucky Spin</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- FIXED HEADER -->
+  <header class="site-header" id="siteHeader">
+    <a class="hdr-logo" href="#">
+      <div class="hdr-logo-icon">🎰</div>
+      <div class="hdr-logo-text">
+        Lucky Spin
+      </div>
+    </a>
+    <nav class="hdr-nav">
+      <a href="index.html" class="active">Home</a>
+      <a href="#">About Us</a>
+      <a href="lucky-number.html">Lucky Number</a>
+    </nav>
+  </header>
+
+  <!-- LIVE TICKER -->
+  <div class="ticker">
+    <span class="ticker-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nesciunt, accusantium.</span>
+  </div>
+
+  <div class="bg">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <main class="wrap">
+
+    <!-- HEADER -->
+
+    <!-- TODAY'S RESULTS -->
+    <div class="today-section">
+      <div class="today-header">
+        <span class="today-title">Today's Results</span>
+        <span class="today-date-badge" id="todayDateBadge">—</span>
+      </div>
+      <div class="today-grid" id="todayGrid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <div class="rule"></div>
+
+    <!-- OLD RESULTS -->
+    <section class="old-section" id="old-results">
+      <h2 class="section-title">Old Results</h2>
+      <div id="oldResultsContainer"></div>
+      <div class="load-more-wrap">
+        <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreResults()">
+          <span>↓</span> Load More Days
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-logo">
+      Lucky Spin
+    </div>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="#">About</a>
+      <a href="lucky-number.html">Lucky Number</a>
+    </nav>
+    <div class="footer-rule"></div>
+    <p class="footer-copy">© 2026 Lucky Spin · All Rights Reserved</p>
+  </footer>
+
+  <script src="custom.js"></script>
+</body>
+
+</html>
