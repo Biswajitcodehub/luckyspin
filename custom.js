@@ -20,11 +20,23 @@ window.addEventListener('scroll', () => {
     if (todayDateBadge) todayDateBadge.textContent = `${days[now.getDay()]}, ${dd} ${months[now.getMonth()]} ${yyyy}`;
 })();
 
-// ── COUNTDOWN (next 30-min slot) ──
+// ── COUNTDOWN (next slot based on game mode) ──
 function updateCountdown() {
     const now = new Date();
     const mins = now.getMinutes(), secs = now.getSeconds();
-    const nextSlot = 30 - ((mins % 30) || 30);
+    
+    // Determine interval based on page
+    let interval = 30; // default
+    const pathname = window.location.pathname;
+    if (pathname.includes('goldspin-60.html')) {
+        interval = 60;
+    } else if (pathname.includes('goldspin-30.html')) {
+        interval = 30;
+    } else if (pathname.includes('lucky-number.html')) {
+        interval = 30; // original lucky-number page
+    }
+    
+    const nextSlot = interval - ((mins % interval) || interval);
     const totalSecs = nextSlot * 60 - secs;
     const m = Math.floor(totalSecs / 60), s = totalSecs % 60;
     const cdM = document.getElementById('cd-m');
