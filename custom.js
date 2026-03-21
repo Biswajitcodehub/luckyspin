@@ -257,8 +257,9 @@ function buildWheel(gId) {
 }
 buildWheel('w1-group');
 buildWheel('w2-group');
+if (document.getElementById('w3-group')) buildWheel('w3-group');
 
-let isSpinning = false, rot1 = 0, rot2 = 0;
+let isSpinning = false, rot1 = 0, rot2 = 0, rot3 = 0;
 function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 
 function spinWheels() {
@@ -269,49 +270,87 @@ function spinWheels() {
     const dv1 = document.getElementById('dval1'), dv2 = document.getElementById('dval2');
     const db1 = document.getElementById('dbox1'), db2 = document.getElementById('dbox2');
     const sub = document.getElementById('rsub');
+    const hasThird = document.getElementById('dval3') !== null;
+    const dv3 = hasThird ? document.getElementById('dval3') : null;
+    const db3 = hasThird ? document.getElementById('dbox3') : null;
     btn.disabled = true;
     card.classList.remove('lit'); db1.classList.remove('lit'); db2.classList.remove('lit');
+    if (db3) db3.classList.remove('lit');
     dv1.textContent = '·'; dv2.textContent = '·';
+    if (dv3) dv3.textContent = '·';
     dv1.classList.add('dim'); dv2.classList.add('dim');
+    if (dv3) dv3.classList.add('dim');
     sub.textContent = 'Spinning…';
     document.getElementById('ring1').classList.add('hot');
     document.getElementById('ring2').classList.add('hot');
+    if (hasThird) document.getElementById('ring3').classList.add('hot');
     const t1 = Math.floor(Math.random() * SEGMENTS), t2 = Math.floor(Math.random() * SEGMENTS);
+    const t3 = hasThird ? Math.floor(Math.random() * SEGMENTS) : 0;
     const as = 360 / SEGMENTS, half = as / 2;
     const la1 = ((SEGMENTS - t1) * as - half + 360) % 360;
     const la2 = ((SEGMENTS - t2) * as - half + 360) % 360;
+    const la3 = hasThird ? ((SEGMENTS - t3) * as - half + 360) % 360 : 0;
     const cn1 = ((rot1 % 360) + 360) % 360, cn2 = ((rot2 % 360) + 360) % 360;
+    const cn3 = hasThird ? ((rot3 % 360) + 360) % 360 : 0;
     const d1 = (la1 - cn1 + 360) % 360 || 360, d2 = (la2 - cn2 + 360) % 360 || 360;
+    const d3 = hasThird ? (la3 - cn3 + 360) % 360 || 360 : 0;
     const s1 = (6 + Math.floor(Math.random() * 4)) * 360, s2 = (6 + Math.floor(Math.random() * 4)) * 360;
+    const s3 = hasThird ? (6 + Math.floor(Math.random() * 4)) * 360 : 0;
     const total1 = s1 + d1, total2 = s2 + d2;
+    const total3 = hasThird ? s3 + d3 : 0;
     const dur = 3600 + Math.random() * 800, startT = performance.now();
     const sr1 = rot1, sr2 = rot2;
+    const sr3 = hasThird ? rot3 : 0;
     function animate(now) {
         const el = now - startT, t = Math.min(el / dur, 1), e = easeOut(t);
         rot1 = sr1 + total1 * e; rot2 = sr2 + total2 * e;
+        if (hasThird) rot3 = sr3 + total3 * e;
         document.getElementById('w1-group').setAttribute('transform', `rotate(${rot1} 110 110)`);
         document.getElementById('w2-group').setAttribute('transform', `rotate(${rot2} 110 110)`);
+        if (hasThird) document.getElementById('w3-group').setAttribute('transform', `rotate(${rot3} 110 110)`);
         if (t < 1) { requestAnimationFrame(animate); }
         else {
             rot1 = sr1 + total1; rot2 = sr2 + total2;
+            if (hasThird) rot3 = sr3 + total3;
             document.getElementById('w1-group').setAttribute('transform', `rotate(${rot1} 110 110)`);
             document.getElementById('w2-group').setAttribute('transform', `rotate(${rot2} 110 110)`);
+            if (hasThird) document.getElementById('w3-group').setAttribute('transform', `rotate(${rot3} 110 110)`);
             document.getElementById('ring1').classList.remove('hot');
             document.getElementById('ring2').classList.remove('hot');
+            if (hasThird) document.getElementById('ring3').classList.remove('hot');
             setTimeout(() => { dv1.textContent = t1; dv1.classList.remove('dim'); db1.classList.add('lit'); }, 100);
             setTimeout(() => {
                 dv2.textContent = t2; dv2.classList.remove('dim'); db2.classList.add('lit');
-                card.classList.add('lit'); sub.textContent = 'Your fortune is revealed!';
-                const luckyInput = document.getElementById('luckyInput');
-                if (luckyInput) luckyInput.value = String(t1) + String(t2);
-                document.getElementById('wheel1').classList.add('celebrating');
-                document.getElementById('wheel2').classList.add('celebrating');
+                if (!hasThird) {
+                    card.classList.add('lit'); sub.textContent = 'Your fortune is revealed!';
+                    const luckyInput = document.getElementById('luckyInput');
+                    if (luckyInput) luckyInput.value = String(t1) + String(t2);
+                    document.getElementById('wheel1').classList.add('celebrating');
+                    document.getElementById('wheel2').classList.add('celebrating');
+                    setTimeout(() => {
+                        document.getElementById('wheel1').classList.remove('celebrating');
+                        document.getElementById('wheel2').classList.remove('celebrating');
+                    }, 1600);
+                    spawnParticles();
+                }
+            }, hasThird ? 260 : 360);
+            if (hasThird) {
                 setTimeout(() => {
-                    document.getElementById('wheel1').classList.remove('celebrating');
-                    document.getElementById('wheel2').classList.remove('celebrating');
-                }, 1600);
-                spawnParticles();
-            }, 360);
+                    dv3.textContent = t3; dv3.classList.remove('dim'); db3.classList.add('lit');
+                    card.classList.add('lit'); sub.textContent = 'Your fortune is revealed!';
+                    const luckyInput = document.getElementById('luckyInput');
+                    if (luckyInput) luckyInput.value = String(t1) + String(t2) + String(t3);
+                    document.getElementById('wheel1').classList.add('celebrating');
+                    document.getElementById('wheel2').classList.add('celebrating');
+                    document.getElementById('wheel3').classList.add('celebrating');
+                    setTimeout(() => {
+                        document.getElementById('wheel1').classList.remove('celebrating');
+                        document.getElementById('wheel2').classList.remove('celebrating');
+                        document.getElementById('wheel3').classList.remove('celebrating');
+                    }, 1600);
+                    spawnParticles();
+                }, 420);
+            }
             isSpinning = false; btn.disabled = false;
         }
     }
