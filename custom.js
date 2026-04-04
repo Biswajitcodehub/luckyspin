@@ -1,3 +1,11 @@
+// Goldspin 30 (2-digit): change the numbers below
+const GS30_BTN1 = '45';   
+const GS30_BTN2 = '87'; 
+
+// Goldspin 60 (3-digit): change the numbers below 
+const GS60_BTN1 = '456';
+const GS60_BTN2 = '954';
+
 
 // ── HEADER SCROLL ──
 window.addEventListener('scroll', () => {
@@ -20,29 +28,22 @@ window.addEventListener('scroll', () => {
     if (todayDateBadge) todayDateBadge.textContent = `${days[now.getDay()]}, ${dd} ${months[now.getMonth()]} ${yyyy}`;
 })();
 
-// ── COUNTDOWN (next slot based on game mode) ──
+// ── COUNTDOWN ──
 function updateCountdown() {
     const now = new Date();
     const mins = now.getMinutes(), secs = now.getSeconds();
-    
-    // Determine interval based on page
-    let interval = 30; // default
+    let interval = 30;
     const pathname = window.location.pathname;
-    if (pathname.includes('goldspin-60.html')) {
-        interval = 60;
-    } else if (pathname.includes('goldspin-30.html')) {
-        interval = 30;
-    } else if (pathname.includes('lucky-number.html')) {
-        interval = 30; // original lucky-number page
-    }
-    
+    if (pathname.includes('goldspin-60.html')) interval = 60;
+    else if (pathname.includes('goldspin-30.html')) interval = 30;
+    else if (pathname.includes('lucky-number.html')) interval = 30;
     const nextSlot = interval - ((mins % interval) || interval);
     const totalSecs = nextSlot * 60 - secs;
     const m = Math.floor(totalSecs / 60), s = totalSecs % 60;
     const cdM = document.getElementById('cd-m');
-    if (cdM) cdM.textContent = String(m).padStart(2, '0');
+    if (cdM) cdM.textContent = String(m).padStart(2, '00');
     const cdS = document.getElementById('cd-s');
-    if (cdS) cdS.textContent = String(s).padStart(2, '0');
+    if (cdS) cdS.textContent = String(s).padStart(2, '00');
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
@@ -131,7 +132,6 @@ const allOldResults = [
             { n: '01' }, { n: '00' }, { n: '09' }, { n: '08' },
         ]
     },
-    // Extra days for load more
     {
         date: '03/03/2026', label: 'Monday, 03 March 2026', rows: [
             { n: '03' }, { n: '06' }, { n: '09' }, { n: '02' },
@@ -198,7 +198,7 @@ function loadMoreResults() {
         btn.disabled = true; btn.textContent = 'No More Results';
     }
 }
-if (document.getElementById('oldResultsContainer')) loadMoreResults(); // initial load
+if (document.getElementById('oldResultsContainer')) loadMoreResults();
 
 // ── WHEELS ──
 const SEGMENTS = 10, NUMBERS = Array.from({ length: 10 }, (_, i) => i);
@@ -206,6 +206,7 @@ const CX = 110, CY = 110, R = 104, INNER = 24;
 
 function buildWheel(gId) {
     const g = document.getElementById(gId);
+    if (!g) return;
     const step = (2 * Math.PI) / SEGMENTS;
     const col = [['#cc3300', '#dd4400'], ['#bb2a00', '#cc3800']];
     for (let i = 0; i < SEGMENTS; i++) {
@@ -259,33 +260,61 @@ buildWheel('w1-group');
 buildWheel('w2-group');
 if (document.getElementById('w3-group')) buildWheel('w3-group');
 
+// ── FIXED RESULT BUTTONS ──
+function spinFixed(btnIndex) {
+    const pathname = window.location.pathname;
+    let result;
+    if (pathname.includes('goldspin-30.html')) {
+        result = btnIndex === 1 ? GS30_BTN1 : GS30_BTN2;
+    } else if (pathname.includes('goldspin-60.html')) {
+        result = btnIndex === 1 ? GS60_BTN1 : GS60_BTN2;
+    }
+    if (!result) return;
+    const digits = result.split('').map(Number);
+    spinWheels(digits);
+}
+
+// ── SPIN WHEELS ──
 let isSpinning = false, rot1 = 0, rot2 = 0, rot3 = 0;
 function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 
-function spinWheels() {
+// forcedDigits = array of digits to land on, or undefined for random
+function spinWheels(forcedDigits) {
     if (isSpinning) return;
     isSpinning = true;
+
     const btn = document.getElementById('spinBtn');
     const card = document.getElementById('resultCard');
     const dv1 = document.getElementById('dval1'), dv2 = document.getElementById('dval2');
     const db1 = document.getElementById('dbox1'), db2 = document.getElementById('dbox2');
     const sub = document.getElementById('rsub');
+    const luckyInput = document.getElementById('luckyInput');
     const hasThird = document.getElementById('dval3') !== null;
     const dv3 = hasThird ? document.getElementById('dval3') : null;
     const db3 = hasThird ? document.getElementById('dbox3') : null;
-    btn.disabled = true;
-    card.classList.remove('lit'); db1.classList.remove('lit'); db2.classList.remove('lit');
+
+    // Disable all buttons while spinning
+    if (btn) btn.disabled = true;
+    document.querySelectorAll('.fixed-btn').forEach(b => b.disabled = true);
+
+    card.classList.remove('lit');
+    db1.classList.remove('lit'); db2.classList.remove('lit');
     if (db3) db3.classList.remove('lit');
     dv1.textContent = '·'; dv2.textContent = '·';
     if (dv3) dv3.textContent = '·';
     dv1.classList.add('dim'); dv2.classList.add('dim');
     if (dv3) dv3.classList.add('dim');
+    if (luckyInput) luckyInput.value = '';
     sub.textContent = 'Spinning…';
     document.getElementById('ring1').classList.add('hot');
     document.getElementById('ring2').classList.add('hot');
     if (hasThird) document.getElementById('ring3').classList.add('hot');
-    const t1 = Math.floor(Math.random() * SEGMENTS), t2 = Math.floor(Math.random() * SEGMENTS);
-    const t3 = hasThird ? Math.floor(Math.random() * SEGMENTS) : 0;
+
+    // Fixed or random digits
+    const t1 = forcedDigits ? forcedDigits[0] : Math.floor(Math.random() * SEGMENTS);
+    const t2 = forcedDigits ? forcedDigits[1] : Math.floor(Math.random() * SEGMENTS);
+    const t3 = hasThird ? (forcedDigits ? forcedDigits[2] : Math.floor(Math.random() * SEGMENTS)) : 0;
+
     const as = 360 / SEGMENTS, half = as / 2;
     const la1 = ((SEGMENTS - t1) * as - half + 360) % 360;
     const la2 = ((SEGMENTS - t2) * as - half + 360) % 360;
@@ -296,11 +325,10 @@ function spinWheels() {
     const d3 = hasThird ? (la3 - cn3 + 360) % 360 || 360 : 0;
     const s1 = (6 + Math.floor(Math.random() * 4)) * 360, s2 = (6 + Math.floor(Math.random() * 4)) * 360;
     const s3 = hasThird ? (6 + Math.floor(Math.random() * 4)) * 360 : 0;
-    const total1 = s1 + d1, total2 = s2 + d2;
-    const total3 = hasThird ? s3 + d3 : 0;
+    const total1 = s1 + d1, total2 = s2 + d2, total3 = hasThird ? s3 + d3 : 0;
     const dur = 3600 + Math.random() * 800, startT = performance.now();
-    const sr1 = rot1, sr2 = rot2;
-    const sr3 = hasThird ? rot3 : 0;
+    const sr1 = rot1, sr2 = rot2, sr3 = hasThird ? rot3 : 0;
+
     function animate(now) {
         const el = now - startT, t = Math.min(el / dur, 1), e = easeOut(t);
         rot1 = sr1 + total1 * e; rot2 = sr2 + total2 * e;
@@ -308,8 +336,10 @@ function spinWheels() {
         document.getElementById('w1-group').setAttribute('transform', `rotate(${rot1} 110 110)`);
         document.getElementById('w2-group').setAttribute('transform', `rotate(${rot2} 110 110)`);
         if (hasThird) document.getElementById('w3-group').setAttribute('transform', `rotate(${rot3} 110 110)`);
-        if (t < 1) { requestAnimationFrame(animate); }
-        else {
+
+        if (t < 1) {
+            requestAnimationFrame(animate);
+        } else {
             rot1 = sr1 + total1; rot2 = sr2 + total2;
             if (hasThird) rot3 = sr3 + total3;
             document.getElementById('w1-group').setAttribute('transform', `rotate(${rot1} 110 110)`);
@@ -318,12 +348,16 @@ function spinWheels() {
             document.getElementById('ring1').classList.remove('hot');
             document.getElementById('ring2').classList.remove('hot');
             if (hasThird) document.getElementById('ring3').classList.remove('hot');
-            setTimeout(() => { dv1.textContent = t1; dv1.classList.remove('dim'); db1.classList.add('lit'); }, 100);
+
+            setTimeout(() => {
+                dv1.textContent = t1; dv1.classList.remove('dim'); db1.classList.add('lit');
+            }, 100);
+
             setTimeout(() => {
                 dv2.textContent = t2; dv2.classList.remove('dim'); db2.classList.add('lit');
                 if (!hasThird) {
-                    card.classList.add('lit'); sub.textContent = 'Your fortune is revealed!';
-                    const luckyInput = document.getElementById('luckyInput');
+                    card.classList.add('lit');
+                    sub.textContent = 'Your fortune is revealed!';
                     if (luckyInput) luckyInput.value = String(t1) + String(t2);
                     document.getElementById('wheel1').classList.add('celebrating');
                     document.getElementById('wheel2').classList.add('celebrating');
@@ -334,11 +368,12 @@ function spinWheels() {
                     spawnParticles();
                 }
             }, hasThird ? 260 : 360);
+
             if (hasThird) {
                 setTimeout(() => {
                     dv3.textContent = t3; dv3.classList.remove('dim'); db3.classList.add('lit');
-                    card.classList.add('lit'); sub.textContent = 'Your fortune is revealed!';
-                    const luckyInput = document.getElementById('luckyInput');
+                    card.classList.add('lit');
+                    sub.textContent = 'Your fortune is revealed!';
                     if (luckyInput) luckyInput.value = String(t1) + String(t2) + String(t3);
                     document.getElementById('wheel1').classList.add('celebrating');
                     document.getElementById('wheel2').classList.add('celebrating');
@@ -351,12 +386,16 @@ function spinWheels() {
                     spawnParticles();
                 }, 420);
             }
-            isSpinning = false; btn.disabled = false;
+
+            isSpinning = false;
+            if (btn) btn.disabled = false;
+            document.querySelectorAll('.fixed-btn').forEach(b => b.disabled = false);
         }
     }
     requestAnimationFrame(animate);
 }
 
+// ── PARTICLES ──
 function spawnParticles() {
     const colors = ['#fff', '#ffe090', '#ffb830', '#7a1500', '#ff6a00', '#ffd060'];
     const cont = document.getElementById('particles');

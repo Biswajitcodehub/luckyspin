@@ -17,9 +17,7 @@
   <header class="site-header" id="siteHeader">
     <a class="hdr-logo" href="#">
       <div class="hdr-logo-icon">🎰</div>
-      <div class="hdr-logo-text">
-        Lucky Spin
-      </div>
+      <div class="hdr-logo-text">Lucky Spin</div>
     </a>
     <nav class="hdr-nav">
       <a href="index.html">Home</a>
@@ -42,14 +40,12 @@
 
   <main class="wrap">
 
-    <!-- HEADER -->
     <section class="hdr">
       <div class="live-pill"><span class="live-dot"></span>Live Draw</div>
       <h1 class="title">Goldspin <span class="ff">30</span></h1>
       <p class="tagline">Spin the Wheel · Claim Your Number · 30-Min Intervals</p>
       <div class="date-row">
         <span class="date-chip" id="dateChip">—</span>
-        <!-- COUNTDOWN -->
         <div class="countdown-wrap">
           <span class="cd-label">Next Draw</span>
           <div class="cd-slots">
@@ -66,10 +62,7 @@
       <div class="wcol">
         <span class="dtag">First Digit</span>
         <div class="ptr-wrap">
-          <div class="ptr">
-            <div class="ptr-head"></div>
-            <div class="ptr-stem"></div>
-          </div>
+          <div class="ptr"><div class="ptr-head"></div><div class="ptr-stem"></div></div>
         </div>
         <div class="wframe">
           <div class="wring" id="ring1"></div>
@@ -88,17 +81,12 @@
         </div>
       </div>
       <div class="conn">
-        <div class="cline"></div>
-        <div class="cicon">✦</div>
-        <div class="cline"></div>
+        <div class="cline"></div><div class="cicon">✦</div><div class="cline"></div>
       </div>
       <div class="wcol">
         <span class="dtag">Second Digit</span>
         <div class="ptr-wrap">
-          <div class="ptr">
-            <div class="ptr-head"></div>
-            <div class="ptr-stem"></div>
-          </div>
+          <div class="ptr"><div class="ptr-head"></div><div class="ptr-stem"></div></div>
         </div>
         <div class="wframe">
           <div class="wring" id="ring2"></div>
@@ -121,8 +109,17 @@
         <div class="dsep">·</div>
         <div class="dbox" id="dbox2"><span class="dval dim" id="dval2">?</span></div>
       </div>
-      <input type="text" id="luckyInput" readonly style="margin-top: 10px; text-align: center; font-size: 18px;">
+      <input type="text" id="luckyInput" readonly style="margin-top:10px;text-align:center;font-size:18px;">
       <span class="rsub" id="rsub">Spin to reveal</span>
+    </div>
+
+    <!-- FIXED RESULT BUTTONS -->
+    <div class="fixed-btns-area">
+      <span class="fixed-btns-label">Quick Spin</span>
+      <div class="fixed-btns-row">
+        <button class="fixed-btn" onclick="spinFixed(1)">Button 1</button>
+        <button class="fixed-btn" onclick="spinFixed(2)">Button 2</button>
+      </div>
     </div>
 
     <div class="sarea">
@@ -136,11 +133,8 @@
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
-    <div class="footer-logo">
-      Lucky Spin
-    </div>
+    <div class="footer-logo">Lucky Spin</div>
     <nav class="footer-nav">
       <a href="index.html">Home</a>
       <a href="#">About</a>

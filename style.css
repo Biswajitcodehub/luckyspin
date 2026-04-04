@@ -1381,6 +1381,61 @@ input#luckyInput {
     0 0 15px rgba(255, 200, 80, 0.2);
 }
 
+/* ── FIXED RESULT BUTTONS ── */
+.fixed-btns-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.fixed-btns-label {
+  font-family: "Cinzel", serif;
+  font-size: clamp(9px, 1.8vw, 11px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.fixed-btns-row {
+  display: flex;
+  gap: 16px;
+}
+
+.fixed-btn {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-family: "Cinzel", serif;
+  font-size: clamp(12px, 2.5vw, 15px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: clamp(10px, 2vh, 14px) clamp(24px, 5vw, 40px);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.fixed-btn:hover:not(:disabled) {
+  border-color: rgba(255, 200, 80, 0.7);
+  background: rgba(255, 200, 80, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px rgba(255, 200, 80, 0.3);
+  color: #ffd060;
+}
+
+.fixed-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.fixed-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 @media (max-width: 991px) {
   .stage {
     flex-wrap: wrap;
